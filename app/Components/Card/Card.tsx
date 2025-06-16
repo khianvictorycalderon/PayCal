@@ -3,6 +3,7 @@ import { View, StyleSheet, ViewStyle } from 'react-native';
 interface CardProps {
   children: React.ReactNode;
   Styles?: Pick<ViewStyle, 'padding' | 'margin' | 'backgroundColor' | 'borderRadius'>;
+  center?: boolean; // lowercase and optional
 }
 
 const defaultStyles = StyleSheet.create({
@@ -14,11 +15,14 @@ const defaultStyles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
   },
+  center: {
+    alignItems: 'center',
+  },
 });
 
-export default function Card({ children, Styles = {} }: CardProps) {
+export default function Card({ children, Styles = {}, center = false }: CardProps) {
   return (
-    <View style={[defaultStyles.card, Styles]}>
+    <View style={[defaultStyles.card, Styles, center && defaultStyles.center]}>
       {children}
     </View>
   );

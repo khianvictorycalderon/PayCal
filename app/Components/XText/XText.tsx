@@ -10,11 +10,14 @@ import {
 // === Customizable Part ===
 // You can freely edit the variants and their styles below
 //
-type Variant = "default" | "header";
+type Variant = "default" | "header" | "url" | "subheader" | "subtitle";
 
 const variantStyles: Record<Variant, TextStyle> = {
   default: { fontSize: 18 },
-  header: { fontSize: 24 },
+  header: { fontSize: 24, fontWeight: "bold" },
+  subheader: { fontSize: 18, fontStyle: "italic"},
+  subtitle: { fontSize: 14},
+  url: { color: "blue", textDecorationLine: "underline"}
 };
 //
 // === End of Customizable Part ===
