@@ -1,0 +1,48 @@
+import React from 'react';
+import {
+  StyleProp,
+  Text,
+  TextProps,
+  TextStyle
+} from 'react-native';
+
+//
+// === Customizable Part ===
+// You can freely edit the variants and their styles below
+//
+type Variant = "default" | "header";
+
+const variantStyles: Record<Variant, TextStyle> = {
+  default: { fontSize: 18 },
+  header: { fontSize: 24 },
+};
+//
+// === End of Customizable Part ===
+//
+
+
+// Internal types and logic (usually no need to change this)
+interface XTextProps extends TextProps {
+  variant?: Variant;
+  style?: StyleProp<TextStyle>;
+  children: React.ReactNode;
+}
+
+// Base styling applied to all variants
+const baseStyle: TextStyle = {
+  fontFamily: 'Segoe UI',
+  color: '#222',
+};
+
+export default function XText({
+  variant = 'default',
+  style,
+  children,
+  ...props
+}: XTextProps) {
+  return (
+    <Text style={[baseStyle, variantStyles[variant], style]} {...props}>
+      {children}
+    </Text>
+  );
+}
