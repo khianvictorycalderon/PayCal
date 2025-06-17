@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Pressable, ScrollView, View } from "react-native";
 import { generateUniqueID } from "../Utility/unique_ID_generator";
 import { RelativePathString, useRouter } from "expo-router";
+import { useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackgroundImage from "../Components/BackgroundImage/BackgroundImage";
 import Card from "../Components/Card/Card";
@@ -23,19 +24,23 @@ export default function Projects() {
   const router = useRouter();
 
   // Load saved projects on mount
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
-        if (jsonValue != null) {
-          setProjectList(JSON.parse(jsonValue));
+    if (isFocused) {
+      const loadProjects = async () => {
+        try {
+          const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
+          if (jsonValue != null) {
+            setProjectList(JSON.parse(jsonValue));
+          }
+        } catch (e) {
+          Alert.alert("Load Failed", `Unable to load projects: ${e}`);
         }
-      } catch (e) {
-        console.error("Failed to load projects:", e);
-      }
-    };
-    loadProjects();
-  }, []);
+      };
+      loadProjects();
+    }
+  }, [isFocused]);
 
   // Save to storage when projectList changes
   useEffect(() => {
@@ -63,9 +68,12 @@ export default function Projects() {
   };
 
 const deleteProject = (itemID: string) => {
+  const currentItem = projectList.find(item => item.id === itemID);
+  const projectTitle = currentItem?.title || "this project";
+
   Alert.alert(
     "Delete Project",
-    "Are you sure you want to delete this project?",
+    `Are you sure you want to delete project "${projectTitle}" ?`,
     [
       {
         text: "Cancel",
