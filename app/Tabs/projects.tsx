@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { generateUniqueID } from "../Utility/unique_ID_generator";
 import BackgroundImage from "../Components/BackgroundImage/BackgroundImage";
@@ -50,7 +50,7 @@ export default function Projects() {
             Click the project to edit.
           </XText>
           {projectList.map((item, index) => (
-            <Pressable onPress={() => Alert.alert("Clicked", `Clicked ${item.title}`)} key={index}>
+            <Pressable onPress={() => Alert.alert("Clicked", `Clicked ${item.title}`)} key={item.id}>
               <Card Styles={{backgroundColor: index % 2 == 0 ? listColor1 : listColor2, margin: 2}}>
                 <View style={{display: "flex", flexDirection: "row"}}>
                   <XText variant="project_title" style={{flex: 1}}>{item.title}</XText>
@@ -61,13 +61,13 @@ export default function Projects() {
           ))}
         </>
       ) : (
-        <XText>
-          You don't have any projects yet.
-        </XText>
+        <XText> You don't have any projects yet.</XText>
       )}
       <Button color="pink" onPress={addProject}>
         Add Project
       </Button>
+      {/* Extra spacing so user doesn't accidentally click the home button */}
+      <View style={{ marginTop: 250 }} />
       </ScrollView>
     </BackgroundImage>
   );
