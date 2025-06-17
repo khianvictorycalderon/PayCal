@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { generateUniqueID } from "../Utility/unique_ID_generator";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackgroundImage from "../Components/BackgroundImage/BackgroundImage";
 import Card from "../Components/Card/Card";
 import XText from "../Components/XText/XText";
@@ -14,8 +15,37 @@ interface ListDataProps {
   title: string;
 }
 
+const STORAGE_KEY = "@project_list";
+
 export default function Projects() {
   const [projectList, setProjectList] = useState<ListDataProps[]>([]);
+
+  // Load saved projects on mount
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
+        if (jsonValue != null) {
+          setProjectList(JSON.parse(jsonValue));
+        }
+      } catch (e) {
+        console.error("Failed to load projects:", e);
+      }
+    };
+    loadProjects();
+  }, []);
+
+  // Save to storage when projectList changes
+  useEffect(() => {
+    const saveProjects = async () => {
+      try {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(projectList));
+      } catch (e) {
+        console.error("Failed to save projects:", e);
+      }
+    };
+    saveProjects();
+  }, [projectList]);
 
   const addProject = () => {
     const existingIDs = projectList.map(project => project.id);
@@ -30,9 +60,25 @@ export default function Projects() {
     ]);
   };
 
-  const deleteProject = (itemID: string) => {
-    setProjectList(projectList.filter(item => item.id != itemID));
-  }
+const deleteProject = (itemID: string) => {
+  Alert.alert(
+    "Delete Project",
+    "Are you sure you want to delete this project?",
+    [
+      {
+        text: "Cancel",
+        style: "cancel"
+      },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          setProjectList(prevList => prevList.filter(item => item.id !== itemID));
+        }
+      }
+    ]
+  );
+};
 
   return (
     <BackgroundImage ImagePath={require("../../assets/Images/background.jpg")}>
