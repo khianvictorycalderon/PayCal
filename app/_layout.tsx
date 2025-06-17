@@ -6,6 +6,7 @@ export default function RootLayout() {
       <Stack.Screen name="index"/>
       <Stack.Screen name="Tabs/credits"/>
       <Stack.Screen name="Tabs/projects"/>
+      <Stack.Screen name="Tabs/manage_project"/>
     </Stack>
   )
 }

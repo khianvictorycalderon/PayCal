@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, View } from "react-native";
 import { generateUniqueID } from "../Utility/unique_ID_generator";
+import { RelativePathString, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackgroundImage from "../Components/BackgroundImage/BackgroundImage";
 import Card from "../Components/Card/Card";
@@ -19,6 +20,7 @@ const STORAGE_KEY = "@project_list";
 
 export default function Projects() {
   const [projectList, setProjectList] = useState<ListDataProps[]>([]);
+  const router = useRouter();
 
   // Load saved projects on mount
   useEffect(() => {
@@ -96,7 +98,7 @@ const deleteProject = (itemID: string) => {
             Click the project to edit.
           </XText>
           {projectList.map((item, index) => (
-            <Pressable onPress={() => Alert.alert("Clicked", `Clicked ${item.title}`)} key={item.id}>
+            <Pressable onPress={() => router.push(`Tabs/manage_project?project_id=${item.id}` as RelativePathString)} key={item.id}>
               <Card Styles={{backgroundColor: index % 2 == 0 ? listColor1 : listColor2, margin: 2}}>
                 <View style={{display: "flex", flexDirection: "row"}}>
                   <XText variant="project_title" style={{flex: 1}}>{item.title}</XText>
