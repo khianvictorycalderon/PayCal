@@ -1,67 +1,65 @@
 import { RelativePathString, useRouter } from "expo-router";
-import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
+import BackgroundImage from "./Components/BackgroundImage/BackgroundImage";
+import XText from "./Components/XText/XText";
+import Button from "./Components/CustomizableButton/CustomizableButton"; // Uses your custom Button
 
-// Modularized
-const bgImagePath = "../assets/Images/background.jpg";
+const bgImagePath = require("../assets/Images/background.jpg");
 const title = "PayCal";
+
+// Define the buttons array and assert literal types directly
 const buttons = [
   {
     title: "Choose Project",
     path: "Tabs/projects",
-    backgroundColor: "#3B82F6", // Tailwind blue-500
-    color: "#FFFFFF",
+    color: "yellow",
   },
   {
     title: "Credits",
     path: "Tabs/credits",
-    backgroundColor: "#10B981", // Tailwind emerald-500
-    color: "#FFFFFF",
-  }
-];
+    color: "amber",
+  },
+] as const; // <== This is key to lock the color values as literal strings
 
 export default function Index() {
   const router = useRouter();
 
   return (
-    <ImageBackground
-      source={require(bgImagePath)}
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: 20,
-      }}
-      resizeMode="cover"
-    >
-      <Text
+    <BackgroundImage ImagePath={bgImagePath}>
+      <View
         style={{
-          color: "white",
-          fontSize: 24,
-          fontWeight: "bold",
-          marginBottom: 30,
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          paddingHorizontal: 20,
         }}
       >
-        {title}
-      </Text>
+        <XText
+          variant="header"
+          style={{
+            color: "white",
+            fontSize: 32,
+            fontWeight: "bold",
+            marginBottom: 30,
+          }}
+        >
+          {title}
+        </XText>
 
-      <View style={{ width: "100%", gap: 15 }}>
-        {buttons.map((btn, index) => (
-          <TouchableOpacity
-            key={index}
-            style={{
-              backgroundColor: btn.backgroundColor,
-              paddingVertical: 14,
-              borderRadius: 30,
-              alignItems: "center",
-            }}
-            onPress={() => router.push(btn.path as RelativePathString)}
-          >
-            <Text style={{ color: btn.color, fontSize: 16, fontWeight: "600" }}>
+        <View style={{ width: "100%", gap: 15 }}>
+          {buttons.map((btn, index) => (
+            <Button
+              key={index}
+              color={btn.color}
+              align="full"
+              margin={5}
+              onPress={() => router.push(btn.path as RelativePathString)}
+            >
               {btn.title}
-            </Text>
-          </TouchableOpacity>
-        ))}
+            </Button>
+          ))}
+        </View>
       </View>
-    </ImageBackground>
+    </BackgroundImage>
   );
 }

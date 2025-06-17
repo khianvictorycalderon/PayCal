@@ -13,7 +13,7 @@ import {
 type Variant = "default" | "header" | "url" | "subheader" | "subtitle";
 
 const variantStyles: Record<Variant, TextStyle> = {
-  default: { fontSize: 18 },
+  default: { fontSize: 18, color: "white", alignSelf: "center" },
   header: { fontSize: 24, fontWeight: "bold" },
   subheader: { fontSize: 18, fontStyle: "italic"},
   subtitle: { fontSize: 14},
