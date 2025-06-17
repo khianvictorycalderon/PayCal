@@ -39,13 +39,13 @@ type FormInputProps = {
   };
 };
 
-export const FormInput = ({
+export default function FormInput ({
   Input,
   SubmitLabel,
   OnSubmit,
   FeedbackMessage,
   Style: customStyle = {},
-}: FormInputProps) => {
+}: FormInputProps) {
   const textColor = customStyle.TextColor || "#000";
   const bgColor = customStyle.InputBackgroundColor || "#fff";
   const inputTextColor = customStyle.InputTextColor || "#000";
