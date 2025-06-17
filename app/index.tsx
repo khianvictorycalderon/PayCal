@@ -10,7 +10,7 @@ const title = "PayCal";
 // Define the buttons array and assert literal types directly
 const buttons = [
   {
-    title: "Choose Project",
+    title: "Projects",
     path: "Tabs/projects",
     color: "yellow",
   },

@@ -1,7 +1,6 @@
-// screens/Projects.tsx
-
-import React from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import XText from "../Components/XText/XText";
 import Button from "../Components/CustomizableButton/CustomizableButton";
 import BackgroundImage from "../Components/BackgroundImage/BackgroundImage";
@@ -12,24 +11,64 @@ const listColor2 = "#f59e0b";
 interface ListDataProps {
   title: string;
   sub: string;
-  action: () => void;
 }
 
-const listData: ListDataProps[] = [
-  // Example data
-  {
-    title: "Project 1",
-    sub: "This is a sample project description.",
-    action: () => alert("Sample Project Clicked"),
-  },
-  {
-    title: "Project 2",
-    sub: "This is another project description.",
-    action: () => alert("Second Project Clicked"),
-  },
-];
+const STORAGE_KEY = "@projects_list";
 
 export default function Projects() {
+  const [projects, setProjects] = useState<ListDataProps[]>([]);
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  const loadProjects = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem(STORAGE_KEY);
+      if (storedData) {
+        setProjects(JSON.parse(storedData));
+      }
+    } catch (e) {
+      console.error("Failed to load projects.", e);
+    }
+  };
+
+  const saveProjects = async (data: ListDataProps[]) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.error("Failed to save projects.", e);
+    }
+  };
+
+  const addProject = () => {
+    const newProjects = [
+      ...projects,
+      { title: "Untitled", sub: "No description yet." },
+    ];
+    setProjects(newProjects);
+    saveProjects(newProjects);
+  };
+
+  const deleteProject = (index: number) => {
+    Alert.alert("Delete Project", "Are you sure you want to delete this?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          const updated = [...projects];
+          updated.splice(index, 1);
+          setProjects(updated);
+          saveProjects(updated);
+        },
+      },
+    ]);
+  };
+
   return (
     <BackgroundImage ImagePath={require("../../assets/Images/background.jpg")}>
       <ScrollView
@@ -40,9 +79,9 @@ export default function Projects() {
           minHeight: "100%",
         }}
       >
-        {listData.length > 0 ? (
-          listData.map((item, index) => (
-            <Pressable onPress={item.action} key={index}>
+        {projects.length > 0 ? (
+          projects.map((item, index) => (
+            <Pressable onLongPress={() => deleteProject(index)} key={index}>
               <View
                 style={{
                   padding: 16,
@@ -73,7 +112,8 @@ export default function Projects() {
         ) : (
           <XText>You don't have projects yet.</XText>
         )}
-        <Button>
+
+        <Button color="pink" onPress={addProject}>
           <XText>Add Project</XText>
         </Button>
       </ScrollView>
