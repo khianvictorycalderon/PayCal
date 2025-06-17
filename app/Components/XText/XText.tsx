@@ -10,13 +10,13 @@ import {
 // === Customizable Part ===
 // You can freely edit the variants and their styles below
 //
-type Variant = "default" | "header" | "url" | "subheader" | "subtitle";
+type Variant = "default" | "header" | "project_title" | "project_delete" | "url";
 
 const variantStyles: Record<Variant, TextStyle> = {
   default: { fontSize: 18, color: "white", alignSelf: "center" },
-  header: { fontSize: 24, fontWeight: "bold" },
-  subheader: { fontSize: 18, fontStyle: "italic"},
-  subtitle: { fontSize: 14},
+  project_title: { fontSize: 18, color: "white", alignSelf: "center" },
+  project_delete: { fontSize: 18, color: "white", alignSelf: "center" },
+  header: { fontSize: 24, color: "white", fontWeight: "bold" },
   url: { color: "blue", textDecorationLine: "underline"}
 };
 //

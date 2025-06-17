@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SafeAreaView, Alert, ScrollView } from "react-native";
-import { FormInput } from "./FormInput"; // adjust import path as needed
+import FormInput from "./FormInput"; // adjust import path as needed
 
 export default function Usage() {
   const [name, setName] = useState<string>("");
