@@ -1,4 +1,4 @@
-export const generateUniqueID = (length = 9, existingIDs: string[]): string => {
+export default function generateUniqueID (length = 9, existingIDs: string[]): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
   const generate = () => {
