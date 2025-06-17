@@ -1,3 +1,4 @@
 # PayCal (Payment Calculator)
 
-Coming soon...
+Preview:
+![Preview_Image](sample.jpg)
