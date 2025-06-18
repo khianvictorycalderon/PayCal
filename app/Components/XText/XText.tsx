@@ -43,9 +43,17 @@ export default function XText({
   children,
   ...props
 }: XTextProps) {
+  let content: React.ReactNode = children;
+
+  if (typeof children === 'string') {
+    // Replace <br/> or <br> with newline
+    content = children.replace(/<br\s*\/?>/gi, '\n');
+  }
+
   return (
     <Text style={[baseStyle, variantStyles[variant], style]} {...props}>
-      {children}
+      {content}
     </Text>
   );
 }
+

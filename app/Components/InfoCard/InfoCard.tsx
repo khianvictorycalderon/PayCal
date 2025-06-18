@@ -41,14 +41,18 @@ function renderTextWithLinks(text: string, textColor: string = "#000", urlColor:
         </Text>
       );
     } else {
-      return (
-        <Text key={index} style={{ color: textColor }}>
-          {part}
+      // Handle line breaks inside normal text
+      const lines = part.split("\n");
+      return lines.map((line, lineIndex) => (
+        <Text key={`${index}-${lineIndex}`} style={{ color: textColor }}>
+          {line}
+          {lineIndex !== lines.length - 1 ? "\n" : null}
         </Text>
-      );
+      ));
     }
   });
 }
+
 
 export default function InfoCard({
   Data,
