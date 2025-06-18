@@ -10,9 +10,9 @@ const urlColor = "rgb(17, 0, 255)";
 const infoCardData = [
   {
     Title: "PayCal 1.0",
-    Sub: "Payment Calculator developed by Khian Victory D. Calderon. Visit website: https://khian.netlify.app.",
+    Sub: "Payment Calculator developed by\nKhian Victory D. Calderon. \n\nVisit website: https://khian.netlify.app.",
     AlignTitle: "center" as const,
-    AlignSub: "justify" as const,
+    AlignSub: "center" as const,
   },
   {
     Title: "About",

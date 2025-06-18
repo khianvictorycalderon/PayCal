@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Pressable, ScrollView, View } from "react-native";
-import { generateUniqueID } from "../Utility/unique_ID_generator";
+import { Alert, Pressable, View } from "react-native";
 import { RelativePathString, useRouter } from "expo-router";
 import { useIsFocused } from "@react-navigation/native";
+import DraggableFlatList, { RenderItemParams } from "react-native-draggable-flatlist";
+import generateUniqueID from "../Utility/unique_ID_generator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackgroundImage from "../Components/BackgroundImage/BackgroundImage";
 import Card from "../Components/Card/Card";
@@ -90,41 +91,89 @@ const deleteProject = (itemID: string) => {
   );
 };
 
-  return (
+    return (
     <BackgroundImage ImagePath={require("../../assets/Images/background.jpg")}>
-      <ScrollView
-        contentContainerStyle={{
-          padding: 20,
-          paddingTop: 80,
-          gap: 15,
-          minHeight: "100%",
-        }}
-      >
-      {projectList.length > 0 ? (
-        <>
-          <XText>
-            Click the project to edit.
-          </XText>
-          {projectList.map((item, index) => (
-            <Pressable onPress={() => router.push(`Tabs/manage_project?project_id=${item.id}` as RelativePathString)} key={item.id}>
-              <Card Styles={{backgroundColor: index % 2 == 0 ? listColor1 : listColor2, margin: 2}}>
-                <View style={{display: "flex", flexDirection: "row"}}>
-                  <XText variant="project_title" style={{flex: 1}}>{item.title}</XText>
-                  <Button margin={0} align="center" color="red" onPress={() => deleteProject(item.id)}>Delete</Button>
-                </View>
-              </Card>
-            </Pressable>
-          ))}
-        </>
-      ) : (
-        <XText> You don't have any projects yet.</XText>
-      )}
-      <Button color="pink" onPress={addProject}>
-        Add Project
-      </Button>
-      {/* Extra spacing so user doesn't accidentally click the home button */}
-      <View style={{ marginTop: 250 }} />
-      </ScrollView>
+      <View style={{ flex: 1 }}>
+        {projectList.length > 0 && (
+          <>
+            <XText style={{ paddingHorizontal: 20, paddingTop: 80, textAlign: "center" }}>
+              Click and hold a project to drag.
+            </XText>
+            <XText style={{ paddingHorizontal: 20, textAlign: "center" }}>
+              Tap to edit.
+            </XText>
+          </>
+        )}
+
+        <View style={{ flex: 1, paddingBottom: 80 }}>
+          {projectList.length === 0 ? (
+            <View style={{ padding: 20, paddingTop: 80 }}>
+              <XText>You don't have any projects yet.</XText>
+            </View>
+          ) : (
+            <DraggableFlatList<ListDataProps>
+              data={projectList}
+              keyExtractor={(item) => item.id}
+              onDragEnd={({ data }) => setProjectList(data)}
+              contentContainerStyle={{
+                paddingHorizontal: 10,
+                paddingTop: 10,
+                paddingBottom: 20,
+                gap: 10
+              }}
+              renderItem={({ item, drag, isActive }: RenderItemParams<ListDataProps>) => {
+                const itemIndex = projectList.findIndex((p) => p.id === item.id);
+
+                return (
+                  <Pressable
+                    onPress={() =>
+                      router.push(
+                        `Tabs/manage_project?project_id=${item.id}` as RelativePathString
+                      )
+                    }
+                    onLongPress={drag}
+                    disabled={isActive}
+                  >
+                    <Card
+                      Styles={{
+                        backgroundColor: itemIndex % 2 === 0 ? listColor1 : listColor2,
+                        margin: 2,
+                        opacity: isActive ? 0.8 : 1,
+                      }}
+                    >
+                      <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <XText variant="project_title" style={{ flex: 1 }}>
+                          {item.title}
+                        </XText>
+                        <Button
+                          margin={0}
+                          align="center"
+                          color="red"
+                          onPress={() => deleteProject(item.id)}
+                        >
+                          Delete
+                        </Button>
+                      </View>
+                    </Card>
+                  </Pressable>
+                );
+              }}
+            />
+          )}
+        </View>
+
+        {/* Floating Add Button */}
+        <View style={{
+          position: "absolute",
+          bottom: 100,
+          left: 10,
+          right: 10,
+        }}>
+          <Button color="pink" onPress={addProject}>
+            Add Project
+          </Button>
+        </View>
+      </View>
     </BackgroundImage>
   );
 }
