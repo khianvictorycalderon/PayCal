@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/Images/PayCal.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.khianvictory.paycal"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +38,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5a8a7e4d-012b-4487-a3ad-1317e5ce922c"
+      }
     }
   }
 }
