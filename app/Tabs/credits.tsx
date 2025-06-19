@@ -41,6 +41,7 @@ const infoCardData = [
       "- Supports multiple projects with individual timers\n" +
       "- Timestamp history for transparency and review\n" +
       "- Data stored locally for privacy and offline use\n" +
+      "- Project export and import support\n" +
       "- Clean and user-friendly interface with responsive design",
     AlignTitle: "center" as const,
     AlignSub: "left" as const,
