@@ -1,23 +1,31 @@
-import { Alert, ScrollView } from "react-native";
-import { RelativePathString, useLocalSearchParams, useRouter } from "expo-router";
+import { Alert, ScrollView, View } from "react-native";
+import { useLocalSearchParams } from "expo-router";
 import BackgroundImage from "../Components/BackgroundImage/BackgroundImage";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FormInput from "../Components/FormInput/FormInput";
+import Button from "../Components/CustomizableButton/CustomizableButton";
 
 const STORAGE_KEY = "@project_list";
 
 interface ListDataProps {
   id: string;
   title: string;
+  description: string;
+  rate: string;
+  currency: string;
 }
 
 export default function Manage_Project() {
   const { project_id } = useLocalSearchParams<{ project_id: string }>();
-  const router = useRouter();
 
   const [projectName, setProjectName] = useState("");
-  const [saveProjectFeedback, setSaveProjectFeedback] = useState<{type: "error" | "warning" | "success", message: string} | undefined>();
+  const [description, setDescription] = useState("");
+  const [rate, setRate] = useState("");
+  const [currency, setCurrency] = useState("");
+  const [saveProjectFeedback, setSaveProjectFeedback] = useState<
+    { type: "error" | "warning" | "success"; message: string } | undefined
+  >();
   const [projectList, setProjectList] = useState<ListDataProps[]>([]);
 
   // Load project list and current project title
@@ -28,9 +36,12 @@ export default function Manage_Project() {
         if (jsonValue != null) {
           const parsed: ListDataProps[] = JSON.parse(jsonValue);
           setProjectList(parsed);
-          const current = parsed.find(p => p.id === project_id);
+          const current = parsed.find((p) => p.id === project_id);
           if (current) {
             setProjectName(current.title);
+            setDescription(current.description);
+            setRate(current.rate);
+            setCurrency(current.currency);
           }
         }
       } catch (e) {
@@ -41,47 +52,53 @@ export default function Manage_Project() {
     loadProjectData();
   }, [project_id]);
 
-  // Remove feedback on any input change
+  // Clear feedback on any input change
   useEffect(() => {
     setSaveProjectFeedback(undefined);
-  },[projectName]);
+  }, [projectName, description, rate, currency]);
 
   const handleSave = async () => {
-
-    if(!projectName) {
-        setSaveProjectFeedback({
-            type: "error",
-            message: "Please fill all fields."
-        });
-        return;
+    if (!projectName || !description || !rate || !currency) {
+      setSaveProjectFeedback({
+        type: "error",
+        message: "Please fill all fields.",
+      });
+      return;
     }
 
-    // Check for duplicate project name (excluding the current one)
     const isDuplicate = projectList.some(
-        p => p.title === projectName && p.id !== project_id
+      (p) => p.title === projectName && p.id !== project_id
     );
 
     if (isDuplicate) {
-        setSaveProjectFeedback({
+      setSaveProjectFeedback({
         type: "error",
-        message: "A project with the same name already exists."
-        });
-        return;
+        message: "A project with the same name already exists.",
+      });
+      return;
     }
 
     try {
-      const updatedList = projectList.map(p =>
-        p.id === project_id ? { ...p, title: projectName } : p
+      const updatedList = projectList.map((p) =>
+        p.id === project_id
+          ? {
+              ...p,
+              title: projectName,
+              description,
+              rate,
+              currency,
+            }
+          : p
       );
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedList));
       setSaveProjectFeedback({
         type: "success",
-        message: "Successfully Saved!"
+        message: "Successfully Saved!",
       });
     } catch (e) {
       setSaveProjectFeedback({
         type: "error",
-        message: `Unable to save: ${e}`
+        message: `Unable to save: ${e}`,
       });
     }
   };
@@ -104,14 +121,40 @@ export default function Manage_Project() {
               Value: projectName,
               OnChange: setProjectName,
             },
+            {
+              Label: "Project Description",
+              ID: "project_description",
+              Type: "text",
+              Value: description,
+              OnChange: setDescription,
+            },
+            {
+              Label: "Rate Per Hour",
+              ID: "project_rate",
+              Type: "number",
+              Value: rate,
+              OnChange: setRate,
+            },
+            {
+              Label: "Currency",
+              ID: "project_currency",
+              Type: "text",
+              Value: currency,
+              OnChange: setCurrency,
+            },
           ]}
           SubmitLabel="Save"
           FeedbackMessage={saveProjectFeedback}
           OnSubmit={handleSave}
           Style={{
             BackgroundColor: "transparent",
+            TextColor: "white",
+            ButtonBackgroundColor: "#eab308"
           }}
         />
+        <View style={{paddingHorizontal: 18}}>
+          <Button color="green">Timer</Button>
+        </View>
       </ScrollView>
     </BackgroundImage>
   );
