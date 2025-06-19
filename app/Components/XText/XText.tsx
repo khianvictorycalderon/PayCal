@@ -10,14 +10,17 @@ import {
 // === Customizable Part ===
 // You can freely edit the variants and their styles below
 //
-type Variant = "default" | "header" | "project_title" | "project_delete" | "url";
+type Variant = "default" | "header" | "project_title" | "project_delete" | "url" | "info_data" | "timer" | "timestamp";
 
 const variantStyles: Record<Variant, TextStyle> = {
   default: { fontSize: 18, color: "white", alignSelf: "center" },
   project_title: { fontSize: 18, color: "white", alignSelf: "center" },
   project_delete: { fontSize: 18, color: "white", alignSelf: "center" },
   header: { fontSize: 24, color: "white", fontWeight: "bold" },
-  url: { color: "blue", textDecorationLine: "underline"}
+  url: { color: "blue", textDecorationLine: "underline"},
+  info_data: { color: "white", alignSelf: "flex-start", fontSize: 14},
+  timer: {fontSize: 50, color: "white"},
+  timestamp: { fontSize: 14, color: "white"}
 };
 //
 // === End of Customizable Part ===
