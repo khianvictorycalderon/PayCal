@@ -36,6 +36,8 @@ type FormInputProps = {
     BackgroundColor?: string;
     InputTextColor?: string;
     InputBackgroundColor?: string;
+    ButtonBackgroundColor?: string;
+    ButtonTextColor?: string;
   };
 };
 
@@ -199,8 +201,8 @@ export default function FormInput ({
         ) : null}
 
 
-      <TouchableOpacity style={styles.submitButton} onPress={OnSubmit}>
-        <Text style={styles.submitText}>{SubmitLabel}</Text>
+      <TouchableOpacity style={[styles.submitButton, {backgroundColor: customStyle.ButtonBackgroundColor || "#007bff"}]} onPress={OnSubmit}>
+        <Text style={[styles.submitText, {color: customStyle.ButtonTextColor || "white"}]}>{SubmitLabel}</Text>
       </TouchableOpacity>
 
       <Modal
@@ -297,7 +299,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   submitButton: {
-    backgroundColor: "#007bff",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
