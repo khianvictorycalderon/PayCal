@@ -9,6 +9,9 @@ import BackgroundImage from "../Components/BackgroundImage/BackgroundImage";
 import Card from "../Components/Card/Card";
 import XText from "../Components/XText/XText";
 import Button from "../Components/CustomizableButton/CustomizableButton";
+import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 const listColor1 = "#eab308";
 const listColor2 = "#f59e0b";
@@ -68,30 +71,101 @@ export default function Projects() {
     ]);
   };
 
-const deleteProject = (itemID: string) => {
-  const currentItem = projectList.find(item => item.id === itemID);
-  const projectTitle = currentItem?.title || "this project";
+  const deleteProject = (itemID: string) => {
+    const currentItem = projectList.find(item => item.id === itemID);
+    const projectTitle = currentItem?.title || "this project";
 
-  Alert.alert(
-    "Delete Project",
-    `Are you sure you want to delete project "${projectTitle}" ?`,
-    [
-      {
-        text: "Cancel",
-        style: "cancel"
-      },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => {
-          setProjectList(prevList => prevList.filter(item => item.id !== itemID));
+    Alert.alert(
+      "Delete Project",
+      `Are you sure you want to delete project "${projectTitle}" ?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            setProjectList(prevList => prevList.filter(item => item.id !== itemID));
+          }
         }
-      }
-    ]
-  );
-};
+      ]
+    );
+  };
 
-    return (
+  const importProjects = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "application/json",
+        copyToCacheDirectory: true,
+      });
+
+      if (result.canceled || !result.assets || result.assets.length === 0) {
+        return;
+      }
+
+      const fileUri = result.assets[0].uri;
+      const fileContent = await FileSystem.readAsStringAsync(fileUri, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+
+      const cleaned = fileContent.replace(/^\uFEFF/, "").trim(); // Remove BOM
+      const importedProjects = JSON.parse(cleaned);
+
+      if (!Array.isArray(importedProjects)) {
+        Alert.alert("Import Failed", "Invalid file format. Expected a list of projects.");
+        return;
+      }
+
+      // Filter out duplicates by ID
+      const existingIDs = new Set(projectList.map((p) => p.id));
+      const newProjects = importedProjects.filter((p) => !existingIDs.has(p.id));
+
+      if (newProjects.length === 0) {
+        Alert.alert("No New Projects", "All imported projects already exist.");
+        return;
+      }
+
+      // Merge existing + new
+      setProjectList((prevList) => [...prevList, ...newProjects]);
+      Alert.alert("Import Successful", `${newProjects.length} new project(s) added.`);
+    } catch (err) {
+      Alert.alert("Import Error", `Could not import projects: ${err}`);
+    }
+  };
+
+  const exportProjects = async () => {
+    try {
+      if (projectList.length === 0) {
+        Alert.alert("Export Failed", "There are no projects to export.");
+        return;
+      }
+
+      const jsonData = JSON.stringify(projectList, null, 2); // Pretty-print with 2 spaces
+      const fileUri = FileSystem.documentDirectory + "projects_export.json";
+
+      await FileSystem.writeAsStringAsync(fileUri, jsonData, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+
+      const isSharingAvailable = await Sharing.isAvailableAsync();
+      if (!isSharingAvailable) {
+        Alert.alert("Sharing Not Available", "Your device does not support sharing this file.");
+        return;
+      }
+
+      await Sharing.shareAsync(fileUri, {
+        mimeType: "application/json",
+        dialogTitle: "Export Your Projects",
+        UTI: "public.json", // For iOS
+      });
+    } catch (error) {
+      Alert.alert("Export Error", `Failed to export projects: ${error}`);
+    }
+  };
+
+  return (
     <BackgroundImage ImagePath={require("../../assets/Images/background.jpg")}>
       <View style={{ flex: 1 }}>
         {projectList.length > 0 && (
@@ -117,10 +191,9 @@ const deleteProject = (itemID: string) => {
               onDragEnd={({ data }) => setProjectList(data)}
               contentContainerStyle={{
                 paddingHorizontal: 10,
-                paddingTop: 10,
-                paddingBottom: 20,
                 gap: 10
               }}
+              style={{marginTop: 10, height: "70%"}}
               renderItem={({ item, drag, isActive }: RenderItemParams<ListDataProps>) => {
                 const itemIndex = projectList.findIndex((p) => p.id === item.id);
 
@@ -168,9 +241,16 @@ const deleteProject = (itemID: string) => {
           bottom: 100,
           left: 10,
           right: 10,
+          gap: 10
         }}>
           <Button color="pink" onPress={addProject}>
             Add Project
+          </Button>
+          <Button color="red" onPress={importProjects}>
+            Import Projects
+          </Button>
+          <Button color="green" onPress={exportProjects}>
+            Export Projects
           </Button>
         </View>
       </View>
