@@ -1,4 +1,4 @@
-import { Linking, ScrollView, View } from "react-native";
+import { ScrollView } from "react-native";
 import BackgroundImage from "../Components/BackgroundImage/BackgroundImage";
 import InfoCard from "../Components/InfoCard/InfoCard";
 
@@ -16,16 +16,42 @@ const infoCardData = [
   },
   {
     Title: "About",
-    Sub: "Payment Calculator or PayCal for short, is an experimental Android app that calculates how much a person, specifically freelancers, makes per hour.",
+    Sub: "PayCal (short for Payment Calculator) is an experimental Android app designed for individuals with irregular or unpredictable working hours — especially freelancers and project-based workers — who want a simple way to track their time and earnings.",
     AlignTitle: "center" as const,
     AlignSub: "justify" as const,
   },
   {
-    Title: "How it all started",
-    Sub: "Payment Calculator is designed for freelancers who are always on the move and can't dedicate a full hour to a task. It solves that problem by letting you calculate your hourly earnings anytime, anywhere — all with just a click of a button.",
+    Title: "Why it was created",
+    Sub: "PayCal was created to help people who don't follow a strict 9-to-5 schedule. Whether you work in short bursts or switch between multiple projects in a day, PayCal lets you easily track how long you worked and how much you’ve earned — anytime, anywhere.",
     AlignTitle: "center" as const,
     AlignSub: "justify" as const,
   },
+  {
+    Title: "Personal Motivation",
+    Sub: "I originally built PayCal for myself. As someone who works on multiple freelance and academic projects, I needed a tool that could help me monitor how much time I was really spending and how it translated to earnings. After realizing others might benefit from it too, I decided to share it publicly.",
+    AlignTitle: "center" as const,
+    AlignSub: "justify" as const,
+  },
+  {
+    Title: "Features",
+    Sub: 
+      "- Smart timer that persists even if the app is closed\n" +
+      "- Automatically calculates total hours worked\n" +
+      "- Computes total earnings based on your hourly rate\n" +
+      "- Supports multiple projects with individual timers\n" +
+      "- Timestamp history for transparency and review\n" +
+      "- Data stored locally for privacy and offline use\n" +
+      "- Clean and user-friendly interface with responsive design",
+    AlignTitle: "center" as const,
+    AlignSub: "left" as const,
+  },
+  {
+    Title: "Changelogs",
+    Sub: 
+      "1.0 - Released to the public (Initial version)\n",
+    AlignTitle: "center" as const,
+    AlignSub: "justify" as const,
+  }
 ];
 
 export default function Credits() {
@@ -34,9 +60,11 @@ export default function Credits() {
       <ScrollView
         contentContainerStyle={{
           padding: 20,
-          paddingTop: 80,
-          gap: 15,
-          height: "100%",
+          gap: 15
+        }}
+        style={{
+          marginTop: 80,
+          maxHeight: "80%"
         }}
       >
       <InfoCard Data={infoCardData} BG_A={bg1} BG_B={bg2} Alternate_BG={true} TextColor={textColor} Gap={16} UrlColor={urlColor}/>
