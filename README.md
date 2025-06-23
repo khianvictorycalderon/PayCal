@@ -13,4 +13,7 @@ PayCal (short for Payment Calculator) is an experimental Android app designed fo
 
 Apk file is inside the `apk` folder. Enjoy!
 
+Version Release Date:
+- 1.0: June 22, 2025
+
 ![Preview_Image](preview.jpg)
